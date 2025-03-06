@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)))
     error("Binding failed.");
 
-  printf("Binding succeeded.");
+  printf("Binding succeeded.\n");
 
   // 3. Listen for connections
   listen(sockfd, 5);
@@ -54,22 +54,26 @@ int main(int argc, char *argv[]) {
   // 4. Accept a connection
   cli_len = sizeof(cli_addr);
   newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &cli_len);
-  if (newsockfd < 0)
-    error("Error on accept");
 
-  // 5. Read request
-  bzero(buffer, BUFFER_SIZE);
-  n = read(newsockfd, buffer, 256);
-  if (n < 0)
-    error("Error on read");
+  while (1) {
+    if (newsockfd < 0)
+      error("Error on accept");
 
-  printf("client sent: %s", buffer);
-  bzero(buffer, BUFFER_SIZE);
-  strcpy(buffer, "this is a response from the server");
-  write(newsockfd, buffer, strlen(buffer));
+    //5. Read request
+    //bzero(buffer, BUFFER_SIZE);
+    n = read(newsockfd, buffer, BUFFER_SIZE);
+    printf("buffer: %s\n", buffer);
+    bzero(buffer, BUFFER_SIZE);
 
-  printf("test message sent back to the client\n");
+    if (n < 0)
+      error("Error on read");
 
+    //printf("client sent: %s\n", buffer);
+    // strcpy(buffer, "this is a response from the server");
+    // write(newsockfd, buffer, strlen(buffer));
+
+    // printf("test message sent back to the client\n");
+  }
   close(newsockfd);
   printf("closed socket\n");
 }

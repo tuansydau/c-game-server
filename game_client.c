@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#define BUFFER_SIZE 256
+
 void error(const char *msg) {
   perror(msg);
   printf("\n");
@@ -13,14 +15,14 @@ void error(const char *msg) {
 }
 
 int main(int argc, char **argv) {
-  if (argc < 3) {
-    fprintf(stderr, "Usage: %s <server_ip> <port>\n", argv[0]);
-    exit(1);
-  }
+  //if (argc < 3) {
+  //  fprintf(stderr, "Usage: %s <server_ip> <port>\n", argv[0]);
+  //  exit(1);
+  //}
 
   int sockfd, portno, n;
   struct sockaddr_in serv_addr;
-  char buffer[256];
+  char buffer[BUFFER_SIZE];
 
   // 1. Create socket
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -41,22 +43,28 @@ int main(int argc, char **argv) {
   }
 
   // 3. Write request (msg for now) to server
-  bzero(buffer, sizeof(buffer));
-  strcpy(buffer, "test msg!");
+  bzero(buffer, BUFFER_SIZE);
+  char message[256];
+  snprintf(message, sizeof(message), "test string from %s", argv[3]);
 
-  n = write(sockfd, buffer, strlen(buffer) - 1);
-  if (n < 0)
-    error("Error writing to socket");
+  while (1) {
+    //bzero(buffer, BUFFER_SIZE);
+    strcpy(buffer, message);
+    n = write(sockfd, buffer, strlen(buffer));
+    printf("buffer: %s\n", buffer);
 
-  printf("attempting to write to socket\n");
+    if (n < 0)
+      error("Error writing to socket");
 
-  n = read(sockfd, buffer, sizeof(buffer));
+    usleep(50000);
 
-  if (n < 0)
-    error("error reading from socket");
+    // n = read(sockfd, buffer, BUFFER_SIZE);
 
-  printf("server response: %s\n", buffer);
+    // if (n < 0)
+    //   error("error reading from socket");
 
+    // printf("server response: %s\n", buffer);
+  }
   close(sockfd);
   printf("closed socket\n");
 }
