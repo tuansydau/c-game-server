@@ -5,15 +5,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-// Serverside process for HTTP/0.9
-// 1. Create a socket: Socket(domain, type, protocol) -> sockfd
-// 2. Bind the socket to a port: Bind(sockfd, *addr, addrlen)
-// 3. Listen for connections: listen(sockfd, backlog)
-//          clientside: connect(sockfd, *addr, addrlen)
-// 4. Accept a connection: accept(sockfd, &addr, &addrlen) -> newsockfd
-// 5. Read and validate request: read(newsockfd, buffer, buffer_size)
-// 6. Write a response: write(newsockfd, buffer, buffer_size)
-// 7. Close the connection after responding
+
+// TODO before HTTP/0.9
+// [] Write a response to the client 
+// [] Create a response loop to take multiple clients
+// [] Close the connection after responding
 
 void error(const char *msg) {
   perror(msg);
