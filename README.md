@@ -1,0 +1,13 @@
+## A game server for a turn-based text RPG
+
+### Where it's at
+* Transitioning from its old roots as a WIP HTTP/0.9 server
+* Can send a singular message between a single client and server before ending
+
+### TODO
+* Matchmaking between two clients and putting them in the same game room
+* Account management
+* Persistent account data between games
+* Multi-tenancy
+* Make the game 💀
+* The inevitable port to C++
