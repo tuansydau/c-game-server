@@ -8,6 +8,7 @@
 
 void error(const char *msg) {
   perror(msg);
+  printf("\n");
   exit(1);
 }
 
@@ -32,7 +33,7 @@ int main(int argc, char **argv) {
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(portno);
-  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
 
   // 2. Connect to server
   if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
@@ -43,7 +44,19 @@ int main(int argc, char **argv) {
   bzero(buffer, sizeof(buffer));
   strcpy(buffer, "test msg!");
 
-  n = write(sockfd, buffer, strlen(buffer));
+  n = write(sockfd, buffer, strlen(buffer) - 1);
   if (n < 0)
-    error("Error reading from socket");
+    error("Error writing to socket");
+
+  printf("attempting to write to socket\n");
+
+  n = read(sockfd, buffer, sizeof(buffer));
+
+  if (n < 0)
+    error("error reading from socket");
+
+  printf("server response: %s\n", buffer);
+
+  close(sockfd);
+  printf("closed socket\n");
 }

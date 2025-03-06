@@ -7,9 +7,11 @@
 #include <unistd.h>
 
 // TODO before HTTP/0.9
-// [] Write a response to the client 
+// [] Write a response to the client
 // [] Create a response loop to take multiple clients
 // [] Close the connection after responding
+
+#define BUFFER_SIZE 256
 
 void error(const char *msg) {
   perror(msg);
@@ -19,21 +21,19 @@ void error(const char *msg) {
 // Main function
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    fprintf(stderr, "Port number not provided, program terminated.");
-    fputs("\n", stderr);
+    fprintf(stderr, "Port number not provided, program terminated.\n");
     exit(1);
   }
 
   int sockfd, newsockfd, portno, n;
-  char buffer[256];
+  char buffer[BUFFER_SIZE];
   struct sockaddr_in serv_addr, cli_addr;
   socklen_t cli_len;
 
   // 1. Create a socket
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0) {
+  if (sockfd < 0)
     error("Error opening socket");
-  }
 
   bzero((char *)&serv_addr, sizeof(serv_addr));
   portno = atoi(argv[1]);
@@ -58,12 +58,18 @@ int main(int argc, char *argv[]) {
     error("Error on accept");
 
   // 5. Read request
-  bzero(buffer, sizeof(buffer));
+  bzero(buffer, BUFFER_SIZE);
   n = read(newsockfd, buffer, 256);
   if (n < 0)
     error("Error on read");
 
   printf("client sent: %s", buffer);
+  bzero(buffer, BUFFER_SIZE);
+  strcpy(buffer, "this is a response from the server");
+  write(newsockfd, buffer, strlen(buffer));
 
-  printf("\n");
+  printf("test message sent back to the client\n");
+
+  close(newsockfd);
+  printf("closed socket\n");
 }
