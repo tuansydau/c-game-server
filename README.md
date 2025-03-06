@@ -2,7 +2,7 @@
 
 ### Where it's at
 * Transitioning from its old roots as a WIP HTTP/0.9 server
-* Can send a singular message between a single client and server before ending
+* Can continuously receive messages from a client until client closes its connection
 
 ### Usage
 Server: 
