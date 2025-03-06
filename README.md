@@ -22,4 +22,3 @@ Client
 * Multi-tenancy
 * Make the game 💀
 * The inevitable port to C++
-* Keep the server running until the process is closed
