@@ -1,8 +1,8 @@
 ## A game server for a turn-based text RPG
 
 ### Where it's at
-* Transitioning from its old roots as a WIP HTTP/0.9 server
 * Can continuously receive messages from a client until client closes its connection
+* Uses TCP at the moment, but will switch to UDP
 
 ### Usage
 Server: 
@@ -16,9 +16,4 @@ Client
 ![image](https://github.com/user-attachments/assets/5f7a2953-a2a6-4a26-b6a9-ba12786ecaf6)
 
 ### TODO
-* Matchmaking between two clients and putting them in the same game room
-* Account management
-* Persistent account data between games
-* Multi-tenancy
-* Make the game 💀
-* The inevitable port to C++
+I'm tracking the changes I want to make [here on Notion](https://ambitious-garden-823.notion.site/Server-to-do-s-1aeae526b05c803fb09efdd566fc0989?pvs=4)
