@@ -5,13 +5,13 @@
 * Uses TCP at the moment, but will switch to UDP
 
 ### Usage
+Run `make` in the root directory, then:
+
 Server: 
-1. `gcc -std=c99 game_server.c -o server`
-2. ./server <port_to_run_on>
+1. ./server <port_to_run_on>
 
 Client
-1. `gcc -std=c99 game_client.c -o client`
-2. ./client <server_ip> <port>
+1. ./client <server_ip> <port>
 
 ![image](https://github.com/user-attachments/assets/5f7a2953-a2a6-4a26-b6a9-ba12786ecaf6)
 
