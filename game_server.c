@@ -6,11 +6,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// TODO before HTTP/0.9
-// [] Write a response to the client
-// [] Create a response loop to take multiple clients
-// [] Close the connection after responding
-
 #define BUFFER_SIZE 256
 
 void error(const char *msg) {
@@ -43,37 +38,41 @@ int main(int argc, char *argv[]) {
   serv_addr.sin_addr.s_addr = INADDR_ANY;
 
   // 2. Bind socket to a port
-  if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)))
+  if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     error("Binding failed.");
 
   printf("Binding succeeded.\n");
 
   // 3. Listen for connections
-  listen(sockfd, 5);
-
-  // 4. Accept a connection
-  cli_len = sizeof(cli_addr);
-  newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &cli_len);
+  if (listen(sockfd, 5) < 0) {
+    error("failed to listen on sockfd");
+  }
 
   while (1) {
+    // Check for a new socket and save its file descriptor
+    cli_len = sizeof(cli_addr);
+    newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &cli_len);
     if (newsockfd < 0)
       error("Error on accept");
 
-    //5. Read request
-    //bzero(buffer, BUFFER_SIZE);
-    n = read(newsockfd, buffer, BUFFER_SIZE);
-    printf("buffer: %s\n", buffer);
-    bzero(buffer, BUFFER_SIZE);
+    if (fork() == 0) {
+      while (1) {
+        n = read(newsockfd, buffer, BUFFER_SIZE);
 
-    if (n < 0)
-      error("Error on read");
+        if (n == 0) {
+          error("user has disconnected");
+          break;
+        }
 
-    //printf("client sent: %s\n", buffer);
-    // strcpy(buffer, "this is a response from the server");
-    // write(newsockfd, buffer, strlen(buffer));
-
-    // printf("test message sent back to the client\n");
+        if (n < 0)
+          error("Error on read");
+        printf("buffer: %s\n", buffer);
+        bzero(buffer, BUFFER_SIZE);
+      }
+      exit(1);
+    }
   }
   close(newsockfd);
+
   printf("closed socket\n");
 }
