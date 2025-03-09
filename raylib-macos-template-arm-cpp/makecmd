@@ -1,0 +1,1 @@
+clang++ src/*.cpp -Ilib/ -o "bin/build_osx" -std=c++17 -Llib/ -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL lib/libraylib.a
