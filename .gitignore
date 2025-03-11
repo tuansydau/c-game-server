@@ -3,3 +3,4 @@ server
 client
 game_client
 game_server
+*/.DS_Store
