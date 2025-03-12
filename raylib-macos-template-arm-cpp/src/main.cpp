@@ -1,9 +1,13 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "view.h"
+#include "../../game_client.h"
 
 int main()
 {
+    // Start socket
+    handleSocketSetup("127.0.0.1", "22");
+
     // Initial window viewport setup. Check View for scaling
     View Viewport;
     InitWindow(Viewport.Width, Viewport.Height, "A New Window");
@@ -25,6 +29,7 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawCircle(ballX, ballY, 20, BLACK);
+        sendPosition(ballX, ballY);
 
         // Here is where I would update the server on where the client ball is
 

@@ -23,7 +23,7 @@ void error(const char *msg)
 }
 
 // Create socket and bind to server ip address
-void initSocket()
+void initSocket(const char *serv_addr_str)
 {
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -43,7 +43,7 @@ void closeClient()
   if (sockfd != -1)
   {
     close(sockfd);
-    printf("Socket closed.");
+    printf("Socket closed.\n");
   }
   exit(1);
 }
@@ -73,39 +73,44 @@ void sendPosition(int x, int y)
   printf("%s\n", buffer);
 }
 
-int main(int argc, char **argv)
+void handleSocketSetup(const char *serv_addr_str, const char *portno_str)
 {
-  if (argc < 4)
-  {
-    fprintf(stderr, "Usage: %s <server_ip> <port> <client_#>\n", argv[0]);
-    exit(1);
-  }
-
-  // Bind force close to cleanup function
-  signal(SIGINT, cleanup);
-
   // Initialize port number and server address
-  serv_addr_str = argv[1];
-  portno = atoi(argv[2]);
+  portno = atoi(portno_str);
 
   // 1. Create socket
-  initSocket();
+  initSocket(serv_addr_str);
 
   // 2. Connect to server and write message
   memset(buffer, 0, BUFFER_SIZE);
 
   if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
   {
-    error("failed to connect to server");
+    error("Failed to connect to server");
   }
-
-  // Client loop
-  while (1)
-  {
-    sendPosition(atoi(argv[3]), atoi(argv[3]));
-
-    usleep(1000000);
-  }
-  closeClient();
-  printf("closed socket\n");
+  printf("Connected to server\n");
 }
+
+// int main(int argc, char **argv)
+// {
+//   if (argc < 4)
+//   {
+//     fprintf(stderr, "Usage: %s <server_ip> <port> <client_#>\n", argv[0]);
+//     exit(1);
+//   }
+
+//   // Bind force close to cleanup function
+//   signal(SIGINT, cleanup);
+
+//   handleSocketSetup(argv[1], argv[2], argv[3], argv[3]);
+
+//   // Client loop
+//   while (1)
+//   {
+//     sendPosition(atoi(argv[3]), atoi(argv[3]));
+//     usleep(1000000);
+//   }
+
+//   closeClient();
+//   printf("Closed socket\n");
+// }

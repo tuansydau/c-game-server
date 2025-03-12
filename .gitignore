@@ -5,3 +5,4 @@ game_client
 game_server
 */.DS_Store
 */bin/build_osx
+*/game_client.o
