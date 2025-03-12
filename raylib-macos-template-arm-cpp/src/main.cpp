@@ -4,6 +4,12 @@
 #include "player_controller.h"
 #include "view.h"
 
+
+// globals hehe
+PlayerController player(0,0);
+UI ui;
+
+
 // Function prototypes
 void UpdateFPSCounter(UIComponent* component, float deltaTime);
 void UpdatePositionLabel(UIComponent* component, float deltaTime);
@@ -13,10 +19,6 @@ int main(void) {
     View Viewport;
     InitWindow(Viewport.Width, Viewport.Height, "A New Window");
     SetTargetFPS(144);
-    
-    // Initialize UI
-    UI ui;
-    PlayerController player(Viewport.Center.X, Viewport.Center.Y);
     
     Panel* fpsPanel = ui.AddPanel(5, 5, 110, 30, ColorAlpha(BLACK, 0.5f));
     Label* fpsLabel = ui.AddLabel(10, 10, "FPS: 0", 20, GREEN);
@@ -77,10 +79,9 @@ void UpdateFPSCounter(UIComponent* component, float deltaTime) {
 void UpdatePositionLabel(UIComponent* component, float deltaTime) {
     Label* posLabel = dynamic_cast<Label*>(component);
     if (!posLabel) return;
-    Vector2 mousePos = GetMousePosition();
-    std::string posText = "Mouse: (" + 
-                         std::to_string(static_cast<int>(mousePos.x)) + ", " + 
-                         std::to_string(static_cast<int>(mousePos.y)) + ")";
+    std::string posText = "Pos: (" + 
+                         std::to_string(static_cast<int>(player.GetX())) + ", " + 
+                         std::to_string(static_cast<int>(player.GetY())) + ")";
     
     posLabel->SetText(posText);
 }
