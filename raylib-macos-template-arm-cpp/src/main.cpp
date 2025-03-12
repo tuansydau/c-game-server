@@ -34,16 +34,17 @@ int main(void) {
     testButton->SetOnClick(TestButtonAction);
     
     while (!WindowShouldClose()) {
-        player.Update();
-        ui.Update();
+
+        // update
+            player.Update();
+            ui.Update();
         
         // render
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+            ClearBackground(RAYWHITE);
 
-        player.Render();
-        
-        ui.Render();
+            player.Render();
+            ui.Render();
         
         EndDrawing();
     }
