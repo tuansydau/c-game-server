@@ -14,6 +14,7 @@ int portno, n;
 char buffer[BUFFER_SIZE];
 char *serv_addr_str;
 
+// General error handler
 void error(const char *msg)
 {
   perror(msg);
@@ -21,7 +22,7 @@ void error(const char *msg)
   exit(1);
 }
 
-// Create socket
+// Create socket and bind to server ip address
 void initSocket()
 {
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -47,6 +48,7 @@ void closeClient()
   exit(1);
 }
 
+// Force close handler
 void cleanup(int signum)
 {
   closeClient();
@@ -78,7 +80,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "Usage: %s <server_ip> <port> <client_#>\n", argv[0]);
     exit(1);
   }
-  // Add exit handler
+
+  // Bind force close to cleanup function
   signal(SIGINT, cleanup);
 
   // Initialize port number and server address
@@ -88,7 +91,7 @@ int main(int argc, char **argv)
   // 1. Create socket
   initSocket();
 
-  // 2. Write request (msg for now) to server
+  // 2. Connect to server and write message
   memset(buffer, 0, BUFFER_SIZE);
 
   if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
