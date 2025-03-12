@@ -7,3 +7,4 @@ game_server
 */bin/build_osx
 *.ttf
 */game_client.o
+.vscode/

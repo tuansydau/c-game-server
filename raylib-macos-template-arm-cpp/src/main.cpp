@@ -20,7 +20,6 @@ int main(void)
     handleSocketSetup("127.0.0.1", "22");
 
     // Initial window viewport setup. Check View for scaling
-
     View Viewport;
     InitWindow(Viewport.Width, Viewport.Height, "A New Window");
     SetTargetFPS(144);
@@ -40,7 +39,6 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-
         // update
         player.Update();
         ui.Update();
@@ -49,7 +47,6 @@ int main(void)
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        // Here is where I would update the server on where the client ball is
         player.Render();
         ui.Render();
 
