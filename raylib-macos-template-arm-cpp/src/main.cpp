@@ -3,90 +3,104 @@
 #include <string>
 #include "player_controller.h"
 #include "view.h"
-
+#include "../../game_client.h"
 
 // globals hehe
-PlayerController player(0,0);
+PlayerController player(0, 0);
 UI ui;
 
-
 // Function prototypes
-void UpdateFPSCounter(UIComponent* component, float deltaTime);
-void UpdatePositionLabel(UIComponent* component, float deltaTime);
+void UpdateFPSCounter(UIComponent *component, float deltaTime);
+void UpdatePositionLabel(UIComponent *component, float deltaTime);
 void TestButtonAction();
 
-int main(void) {
+int main(void)
+{
+    // Start socket
+    handleSocketSetup("127.0.0.1", "22");
+
+    // Initial window viewport setup. Check View for scaling
+
     View Viewport;
     InitWindow(Viewport.Width, Viewport.Height, "A New Window");
     SetTargetFPS(144);
-    
-    Panel* fpsPanel = ui.AddPanel(5, 5, 110, 30, ColorAlpha(BLACK, 0.5f));
-    Label* fpsLabel = ui.AddLabel(10, 10, "FPS: 0", 20, GREEN);
+
+    Panel *fpsPanel = ui.AddPanel(5, 5, 110, 30, ColorAlpha(BLACK, 0.5f));
+    Label *fpsLabel = ui.AddLabel(10, 10, "FPS: 0", 20, GREEN);
     ui.SetUpdateCallback(fpsLabel, UpdateFPSCounter);
-    
+
     // position display components
-    Panel* posPanel = ui.AddPanel(5, 40, 200, 30, ColorAlpha(BLACK, 0.5f));
-    Label* posLabel = ui.AddLabel(10, 45, "POS: (0, 0)", 20, WHITE);
+    Panel *posPanel = ui.AddPanel(5, 40, 200, 30, ColorAlpha(BLACK, 0.5f));
+    Label *posLabel = ui.AddLabel(10, 45, "POS: (0, 0)", 20, WHITE);
     ui.SetUpdateCallback(posLabel, UpdatePositionLabel);
-    
+
     // test button
-    Button* testButton = ui.AddButton(10, 80, 100, 30, "Test Button");
+    Button *testButton = ui.AddButton(10, 80, 100, 30, "Test Button");
     testButton->SetOnClick(TestButtonAction);
-    
-    while (!WindowShouldClose()) {
+
+    while (!WindowShouldClose())
+    {
 
         // update
-            player.Update();
-            ui.Update();
-        
+        player.Update();
+        ui.Update();
+
         // render
         BeginDrawing();
-            ClearBackground(RAYWHITE);
+        ClearBackground(RAYWHITE);
 
-            player.Render();
-            ui.Render();
-        
+        // Here is where I would update the server on where the client ball is
+        player.Render();
+        ui.Render();
+
         EndDrawing();
     }
     CloseWindow();
-    
+
     return 0;
 }
 
 /*
-* UI component callbacks
-* TODO: move to seperate file
-*
-*
-*/
+ * UI component callbacks
+ * TODO: move to seperate file
+ *
+ *
+ */
 
+void UpdateFPSCounter(UIComponent *component, float deltaTime)
+{
+    Label *fpsLabel = dynamic_cast<Label *>(component);
+    if (!fpsLabel)
+        return;
 
-void UpdateFPSCounter(UIComponent* component, float deltaTime) {
-    Label* fpsLabel = dynamic_cast<Label*>(component);
-    if (!fpsLabel) return;
-    
     int fps = GetFPS();
     std::string fpsText = "FPS: " + std::to_string(fps);
-    
+
     Color fpsColor;
-    if (fps >= 60) fpsColor = GREEN;
-    else if (fps >= 30) fpsColor = YELLOW;
-    else fpsColor = RED;
-    
+    if (fps >= 60)
+        fpsColor = GREEN;
+    else if (fps >= 30)
+        fpsColor = YELLOW;
+    else
+        fpsColor = RED;
+
     fpsLabel->SetText(fpsText);
     fpsLabel->SetTextColor(fpsColor);
 }
 
-void UpdatePositionLabel(UIComponent* component, float deltaTime) {
-    Label* posLabel = dynamic_cast<Label*>(component);
-    if (!posLabel) return;
-    std::string posText = "Pos: (" + 
-                         std::to_string(static_cast<int>(player.GetX())) + ", " + 
-                         std::to_string(static_cast<int>(player.GetY())) + ")";
-    
+void UpdatePositionLabel(UIComponent *component, float deltaTime)
+{
+    Label *posLabel = dynamic_cast<Label *>(component);
+    if (!posLabel)
+        return;
+    std::string posText = "Pos: (" +
+                          std::to_string(static_cast<int>(player.GetX())) + ", " +
+                          std::to_string(static_cast<int>(player.GetY())) + ")";
+
     posLabel->SetText(posText);
 }
 
-void TestButtonAction() {
+void TestButtonAction()
+{
     TraceLog(LOG_INFO, "TeEESTBUTTON");
 }

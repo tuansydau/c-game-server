@@ -1,1 +1,2 @@
-clang++ src/*.cpp -Ilib/ -o "bin/build_osx" -std=c++17 -Llib/ -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL lib/libraylib.a
+clang -c ../game_client.c -o game_client.o
+clang++ src/*.cpp game_client.o -I.. -Ilib/ -o "bin/build_osx" -std=c++17 -Llib/ -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL lib/libraylib.a

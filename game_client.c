@@ -9,66 +9,108 @@
 #define BUFFER_SIZE 256
 
 int sockfd;
+struct sockaddr_in serv_addr;
+int portno, n;
+char buffer[BUFFER_SIZE];
+char *serv_addr_str;
 
-void error(const char *msg) {
+// General error handler
+void error(const char *msg)
+{
   perror(msg);
   printf("\n");
   exit(1);
 }
 
-void cleanup(int signum) {
-  if (sockfd != -1) {
-    close(sockfd);
-    printf("Socket closed due to signal %d\n", signum);
-  }
-  exit(0);
-}
-
-int main(int argc, char **argv) {
-  if (argc < 4) {
-    fprintf(stderr, "Usage: %s <server_ip> <port> <client_#>\n", argv[0]);
-    exit(1);
-  }
-
-  int portno, n;
-  struct sockaddr_in serv_addr;
-  char buffer[BUFFER_SIZE];
-
-  // 1. Create socket
+// Create socket and bind to server ip address
+void initSocket(const char *serv_addr_str)
+{
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
   if (sockfd < 0)
     error("Error opening socket");
-  
-  signal(SIGINT, cleanup);
 
-  bzero((char *)&serv_addr, sizeof(serv_addr));
-  portno = atoi(argv[2]);
+  memset(&serv_addr, 0, sizeof(serv_addr));
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(portno);
-  serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
-
-  // 2. Write request (msg for now) to server
-  bzero(buffer, BUFFER_SIZE);
-  char message[256];
-  snprintf(message, sizeof(message), "test string from %s", argv[3]);
-  
-  if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-    error("failed to connect to server");
-  }
-  printf("%d", sockfd);
-  while (1) {
-    strcpy(buffer, message);
-    n = write(sockfd, buffer, strlen(buffer));
-
-    if (n < 0)
-      error("Error writing to socket");
-
-    printf("buffer: %s\n", buffer);
-
-    usleep(1000000);
-  }
-  close(sockfd);
-  printf("closed socket\n");
+  serv_addr.sin_addr.s_addr = inet_addr(serv_addr_str);
 }
+
+// Close connection
+void closeClient()
+{
+  if (sockfd != -1)
+  {
+    close(sockfd);
+    printf("Socket closed.\n");
+  }
+  exit(1);
+}
+
+// Force close handler
+void cleanup(int signum)
+{
+  closeClient();
+}
+
+// Send message
+void sendPosition(int x, int y)
+{
+  if (sockfd < 0)
+    return;
+
+  char message[256];
+  snprintf(message, sizeof(message), "Position: %d %d", x, y);
+  strcpy(buffer, message);
+
+  n = write(sockfd, buffer, strlen(buffer));
+  if (n < 0)
+  {
+    error("Error writing to socket");
+  }
+
+  printf("%s\n", buffer);
+}
+
+void handleSocketSetup(const char *serv_addr_str, const char *portno_str)
+{
+  // Initialize port number and server address
+  portno = atoi(portno_str);
+
+  // 1. Create socket
+  initSocket(serv_addr_str);
+
+  // 2. Connect to server and write message
+  memset(buffer, 0, BUFFER_SIZE);
+
+  if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+  {
+    error("Failed to connect to server");
+  }
+  printf("Connected to server\n");
+}
+
+// int main(int argc, char **argv)
+// {
+//   if (argc < 4)
+//   {
+//     fprintf(stderr, "Usage: %s <server_ip> <port> <client_#>\n", argv[0]);
+//     exit(1);
+//   }
+
+//   // Bind force close to cleanup function
+//   signal(SIGINT, cleanup);
+
+//   handleSocketSetup(argv[1], argv[2], argv[3], argv[3]);
+
+//   // Client loop
+//   while (1)
+//   {
+//     sendPosition(atoi(argv[3]), atoi(argv[3]));
+//     usleep(1000000);
+//   }
+
+//   closeClient();
+//   printf("Closed socket\n");
+// }
