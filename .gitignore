@@ -3,7 +3,7 @@ server
 client
 game_client
 game_server
-*/.DS_Store
+*.DS_Store
 */bin/build_osx
 *.ttf
 */game_client.o
