@@ -4,8 +4,11 @@
 https://github.com/user-attachments/assets/da2189eb-d04e-4fbc-bd68-55698da58493
 
 ### Demo Notes
+
 Left - Server code running remotely on a DigitalOcean droplet, routed to with nginx
+
 Right - Local terminal on my machine, running the game binary
+
 The game client is running the client network code, and then sending the circle position to the game server on my droplet.
 
 ### Where it's at
